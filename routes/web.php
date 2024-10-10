@@ -12,6 +12,9 @@ Route::get('register', [VaccinationRegistrationController::class, 'create'])->na
 
 Route::post('register', [VaccinationRegistrationController::class, 'store']);
 
+Route::post('/check-vaccination-status', [VaccinationRegistrationController::class, 'checkVaccinationStatus'])->name('check-vaccination-status');
+
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
