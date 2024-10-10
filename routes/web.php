@@ -1,11 +1,16 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\VaccinationRegistrationController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('home');
+
+Route::get('register', [VaccinationRegistrationController::class, 'create'])->name('register');
+
+Route::post('register', [VaccinationRegistrationController::class, 'store']);
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -17,4 +22,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+ require __DIR__.'/auth.php';
