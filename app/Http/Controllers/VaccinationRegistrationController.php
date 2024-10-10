@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\ScheduleVaccinationJob;
 use App\Models\VaccinationRegistration;
 use App\Models\VaccineCenter;
 use Illuminate\Http\Request;
@@ -10,6 +11,14 @@ use Carbon\Carbon;
 class VaccinationRegistrationController extends Controller
 {
 
+    /**
+     * Show the welcome page and status input.
+     */
+    public function index()
+    {
+        return view('welcome');
+    }
+    
     /**
      * Show the form for vaccine registration.
      */
@@ -32,13 +41,17 @@ class VaccinationRegistrationController extends Controller
             'vaccine_center' => ['required', 'integer', 'exists:vaccine_centers,id'],
         ]);
 
-        VaccinationRegistration::create([
+        $registration = VaccinationRegistration::create([
             'name' => $request->name,
             'email' => $request->email,
             'nid' => $request->nid,
             'mobile_number' => $request->mobile_number,
             'vaccine_center_id' => $request->vaccine_center,
+            // scheduled_date will be null initially
         ]);
+
+        // Dispatch the scheduling job in the background
+        ScheduleVaccinationJob::dispatch($registration);
 
         return redirect()->route('home')->with('success', 'You have registered successfully!');
     }
