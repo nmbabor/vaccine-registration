@@ -39,7 +39,7 @@ class ScheduleVaccinationJob implements ShouldQueue
         $this->registration->scheduled_date = $scheduledDate;
         $this->registration->save();
 
-        // Send a first email notification to the user
+        // Send the initial email notification to the user. This is an additional step to notify them for the first time.
         Mail::to($this->registration->email)->send(new VaccinationScheduledMail($this->registration));
     }
     private function getNextAvailableWeekday(VaccineCenter $center)

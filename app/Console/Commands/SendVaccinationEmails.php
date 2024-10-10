@@ -32,8 +32,8 @@ class SendVaccinationEmails extends Command
          // Get the current date and time
          $currentDateTime = Carbon::now();
         
-         // Get the date for tomorrow at 9 PM
-         $tomorrowDate = $currentDateTime->addDay()->setTime(21, 0, 0);
+         // Get the date for tomorrow
+         $tomorrowDate = $currentDateTime->addDay();
  
          // Get all registrations that are scheduled for tomorrow
          $registrations = VaccinationRegistration::whereDate('scheduled_date', $tomorrowDate->toDateString())->get();
