@@ -1,6 +1,12 @@
 <x-guest-layout>
     <!-- Welcome Note -->
     <div class="text-center mt-4">
+    @if(session('success'))
+        <div id="success-alert" class="border text-green px-4 py-3" role="alert">
+            <span class="block sm:inline">{{ session('success') }}</span>
+        </div>
+    @endif
+
         <h1 class="text-2xl font-bold text-gray-800">Welcome to COVID Vaccine Hub</h1>
         <p class="text-lg text-gray-600 mt-4">
             Register today to secure your vaccination if you haven't already!
@@ -28,7 +34,7 @@
                   title="Please enter a valid NID with at least 10 digits."
                   required autofocus />
                 <x-input-error :messages="$errors->get('nid')" class="mt-2" />
-                <span id="error-nid" class="text-red-500 hidden">Please enter a valid NID.</span>
+                <span id="error-nid" class="text-red-500 hidden">Please enter a valid NID with at least 10 digits.</span>
             </div>
 
             <!-- Submit Button -->
@@ -97,6 +103,16 @@
                     alert('Something went wrong. Please try again.');
                 }
             });
+
+
+            //Registration success message disappear after 2 seconds
+            const successAlert = document.getElementById('success-alert');
+            if (successAlert) {
+                // Set a timeout to hide the message after 2 seconds (2000 milliseconds)
+                setTimeout(() => {
+                    successAlert.style.display = 'none';
+                }, 2000);
+            }
         });
 
     </script>

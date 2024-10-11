@@ -23,6 +23,9 @@
                 color: #007bff;
                 text-decoration: underline;
             }
+            .text-green{
+                color: green;
+            }
         </style>
     </head>
     <body class="font-sans text-gray-900 antialiased">

@@ -48,15 +48,15 @@
 
         <!-- Vaccine Center -->
         <div class="mt-4">
-            <x-input-label for="vaccine_center" :value="__('Select Vaccine Center')" />
-            <select id="vaccine_center" name="vaccine_center" class="block mt-1 w-full border-gray-300 rounded-md shadow-sm" required>
+            <x-input-label for="vaccine_center_id" :value="__('Select Vaccine Center')" />
+            <select id="vaccine_center_id" name="vaccine_center_id" class="block mt-1 w-full border-gray-300 rounded-md shadow-sm" required>
                 <option value="" disabled selected>{{ __('Choose a center') }}</option>
                 @foreach ($vaccine_centers as $center)
-                    <option value="{{ $center->id }}">{{ $center->name }} (Limit: {{ $center->daily_limit }})</option>
+                    <option value="{{ $center->id }}" {{ old('vaccine_center_id') == $center->id ? 'selected' : ''}}>{{ $center->name }} (Limit: {{ $center->daily_limit }})</option>
                 @endforeach
                
             </select>
-            <x-input-error :messages="$errors->get('vaccine_center')" class="mt-2" />
+            <x-input-error :messages="$errors->get('vaccine_center_id')" class="mt-2" />
         </div>
 
         <!-- Register Button -->
