@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\VaccineCenter;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,7 +15,6 @@ class VaccineCenterFactory extends Factory
      * @return array<string, mixed>
      */
 
-    //protected $model = VaccineCenter::class;
 
     public function definition(): array
     {

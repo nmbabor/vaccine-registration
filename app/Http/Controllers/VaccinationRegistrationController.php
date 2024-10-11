@@ -43,7 +43,6 @@ class VaccinationRegistrationController extends Controller
      */
     public function store(StoreVaccinationRegistrationRequest $request)
     {
-        //return $request->validated();
         // Handle registration through the service and validate the input using the request class
         $this->vaccinationService->register($request->validated());
 
