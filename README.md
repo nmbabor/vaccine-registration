@@ -237,6 +237,15 @@ If an additional requirement is introduced to send SMS notifications along with 
        }
    }
    ```
+  5. **Environment setup**:
+- Add SMS provider configuration in the `.env` file, such as API keys, sender numbers, etc.
+- Example for Twilio:
+```bash
+TWILIO_SID=your_twilio_sid
+TWILIO_TOKEN=your_twilio_token
+TWILIO_FROM=your_twilio_phone_number
+```
+
 ### Performance Optimization for User Registration and Search
 In this project, I implemented a queue system to manage notifications and vaccination schedules within the registration process, significantly boosting performance and speed. To further optimize user registration and search functionality, and ensure greater scalability, several enhancements could be made to the application.
 
