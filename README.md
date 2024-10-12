@@ -1,66 +1,161 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# COVID Vaccine Registration Portal
 
-## About Laravel
+This project is a web-based COVID vaccine registration portal built with Laravel. It allows users to register for vaccines, check their vaccination status, and receive notifications for scheduled vaccinations.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Prerequisites
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Make sure you have the following installed:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Docker** and **Docker Compose**
+- **Git**
 
-## Learning Laravel
+## Getting Started
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Clone the repository
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+```bash
+git clone https://github.com/nmbabor/vaccine-registration.git
+cd vaccine-registration
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Set up environment variables
 
-## Laravel Sponsors
+1. Copy the `.env.example` file to `.env`:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+   ```bash
+   cp .env.example .env
+   ```
 
-### Premium Partners
+2. Update the following fields in the `.env` file:
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=mysql
+   DB_DATABASE=laravel
+   DB_USERNAME=laravel
+   DB_PASSWORD=hello_secret
 
-## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+   # Email SMTP configuration for Gmail
+   MAIL_MAILER=smtp
+   MAIL_HOST=smtp.gmail.com
+   MAIL_PORT=587
+   MAIL_USERNAME=your-email@gmail.com
+   MAIL_PASSWORD=your-email-password
+   MAIL_ENCRYPTION=tls
+   MAIL_FROM_ADDRESS=noreply@yourdomain.com
+   MAIL_FROM_NAME="${APP_NAME}"
+   ```
 
-## Code of Conduct
+### Docker Setup
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+The project is dockerized, and the following steps will set up everything:
 
-## Security Vulnerabilities
+1. **Build and start Docker containers**:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+   ```bash
+   docker-compose up -d --build
+   ```
 
-## License
+   This command will build and start the following services:
+   - **Laravel app** (PHP 8.2)
+   - **MySQL** database
+   - **Supervisor** to manage queue jobs and scheduled tasks
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+2. **Install dependencies**:
+
+   Run the following command inside the running Laravel container:
+
+   ```bash
+   docker exec -it laravel_app composer install
+   ```
+
+3. **Run migrations and seed data**:
+
+   To set up the database schema and seed initial data (e.g., vaccine centers), run:
+
+   ```bash
+   docker exec -it laravel_app php artisan migrate --seed
+   ```
+
+### Testing Setup
+
+This project includes unit and feature tests that use an SQLite in-memory database for testing.
+
+ **Run the tests**:
+
+   Execute the following command to run tests inside the Docker container:
+
+   ```bash
+   docker exec -it laravel_app php artisan test
+   ```
+
+### Queue Worker and Scheduler
+
+The project uses Laravel's queue system to process background jobs (e.g., scheduling vaccinations and sending notification emails) and the scheduler for periodic tasks.
+
+- **Queue Worker**: Managed by **Supervisor** and automatically processes jobs like vaccination scheduling.
+  
+  If needed, you can manually run the queue worker:
+
+  ```bash
+  docker exec -it laravel_app php artisan queue:work
+  ```
+
+- **Scheduler**: Also managed by **Supervisor**, it runs every minute and processes tasks like sending vaccination reminder emails the night before a scheduled vaccination.
+
+  You can manually trigger the scheduler:
+
+  ```bash
+  docker exec -it laravel_app php artisan schedule:run
+  ```
+
+### Running the Application
+
+Once Docker containers are up and running, access the application via:
+
+```bash
+http://localhost:8000
+```
+
+You should see the registration portal homepage.
+
+### Email Notifications
+
+The app sends email notifications at 9 PM the night before the scheduled vaccination date. Ensure your **SMTP** settings are configured properly in the `.env` file to enable this functionality.
+
+### Additional Commands
+
+- **Clear cache and config**:
+
+   If you update your environment variables or config settings, clear the cache:
+
+   ```bash
+   docker exec -it laravel_app php artisan config:clear
+   docker exec -it laravel_app php artisan cache:clear
+   ```
+
+- **Run migrations**:
+
+   If new migrations are added, run:
+
+   ```bash
+   docker exec -it laravel_app php artisan migrate
+   ```
+
+- **Run seeders**:
+
+   If you want to seed additional data:
+
+   ```bash
+   docker exec -it laravel_app php artisan db:seed
+   ```
+
+### Shutting Down the Application
+
+To stop and remove running Docker containers, run:
+
+```bash
+docker-compose down
+```
