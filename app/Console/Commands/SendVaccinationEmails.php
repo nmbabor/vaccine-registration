@@ -31,17 +31,23 @@ class SendVaccinationEmails extends Command
     {
          // Get the current date and time
          $currentDateTime = Carbon::now();
-        
+
          // Get the date for tomorrow
          $tomorrowDate = $currentDateTime->addDay();
- 
+
          // Get all registrations that are scheduled for tomorrow
          $registrations = VaccinationRegistration::whereDate('scheduled_date', $tomorrowDate->toDateString())->get();
- 
+
          foreach ($registrations as $registration) {
-             Mail::to($registration->email)->send(new VaccinationScheduledMail($registration));
+             try {
+                 // Send Email Notification
+                 Mail::to($registration->email)
+                     ->queue(new VaccinationScheduledMail($registration)); // Queue the email
+             } catch (\Exception $e) {
+                 \Log::error('Failed to send vaccination email to: ' . $registration->email, ['error' => $e->getMessage()]);
+             }
          }
- 
+
          $this->info('Vaccination emails sent successfully!');
     }
 }
