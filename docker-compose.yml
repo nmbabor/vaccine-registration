@@ -1,54 +1,54 @@
 version: '3.8'
 
 services:
+  # Laravel app (PHP-FPM)
   app:
     build:
       context: .
       dockerfile: ./docker/Dockerfile
-    container_name: laravel_app
-    restart: always
+    container_name: vaccine_app
+    restart: unless-stopped
+    working_dir: /var/www/html
     volumes:
-      - .:/var/www
-    ports:
-      - "8000:80"
-    environment:
-      - DB_HOST=mysql
-      - QUEUE_CONNECTION=redis
-      - CACHE_DRIVER=redis
-      - SESSION_DRIVER=redis
-      - REDIS_HOST=redis
+      - ./:/var/www/html:cached
     depends_on:
       - mysql
-      - redis
     networks:
-      - laravel_network
+      - vaccine_network
 
+  # Nginx service to serve the Laravel application
+  nginx:
+    image: nginx:alpine
+    container_name: vaccine_nginx
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www/html:cached
+      - ./docker/nginx:/etc/nginx/conf.d
+    depends_on:
+      - app
+    networks:
+      - vaccine_network
+
+  # MySQL database service
   mysql:
     image: mysql:latest
-    container_name: laravel_mysql
-    restart: always
+    container_name: vaccine_mysql
+    restart: unless-stopped
     environment:
-      MYSQL_DATABASE: laravel
+      MYSQL_DATABASE: covid_registration
       MYSQL_ROOT_PASSWORD: secret
       MYSQL_USER: laravel
       MYSQL_PASSWORD: secret
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
-      - laravel_network
-
-  redis:
-    image: redis:alpine
-    container_name: laravel_redis
-    restart: always
-    networks:
-      - laravel_network
-
-  # Add php-fpm and nginx services as needed (not shown here for brevity)
+      - vaccine_network
 
 volumes:
   mysql_data:
 
 networks:
-  laravel_network:
+  vaccine_network:
     driver: bridge
